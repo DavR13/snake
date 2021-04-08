@@ -7,7 +7,7 @@ from scoreboard import Scoreboard
 
 snake = Snake()
 food = Food()
-score = Scoreboard()
+scoreboard = Scoreboard()
 
 screen = Screen()
 screen.bgcolor('black')
@@ -19,25 +19,25 @@ screen.onkey(snake.left, "Left")
 screen.onkey(snake.right, "Right")
 screen.listen()
 
-game_is_on = True
-
-while game_is_on:
+while scoreboard.game_is_on:
     screen.update()
     time.sleep(0.1)
     snake.move()
 
     # Detect collisions with food
-    if food.distance(snake.head) <= 15:
-        snake.add_segment()
+    if food.distance(snake.head) < 15:
+        snake.extend()
         food.refresh()
-        score.add_point()
-        print("Score: " + str(score.score))
+        scoreboard.add_point()
 
     # Detect collisions with wall
     if abs(snake.head.xcor()) >= screen.window_width()/2 or abs(snake.head.ycor()) >= screen.window_height()/2:
-        break
+        scoreboard.game_over()
 
     # Detect collisions with tail
+    for segment in snake.segments[1:]:
+        if snake.head.distance(segment) < 12:
+            scoreboard.game_over()
 
-score.game_over()
+scoreboard.game_over()
 screen.exitonclick()
